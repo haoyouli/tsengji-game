@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>曾家莊金黃翻面王</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Layout: one phone-width column that swaps three screens (選品項＋今日排行榜 → 三塊煎功挑戰 → 成績卡兌獎). The pan and the heat bar are the game. */
+:root{
+  --bg:#F2EFE6;          /* 米白檯面 */
+  --surface:#FFFFFF;
+  --ink:#1F2420;
+  --muted:#626B63;
+  --line:#DCD8CC;
+  --pan:#2B2F2D;         /* 鐵鍋 */
+  --pan-rim:#454A47;
+  --gold:#D8961E;        /* 煎到金黃 */
+  --gold-soft:#FBEBC8;
+  --green:#2F6B4F;       /* 稻葉綠：主按鈕 */
+  --on-green:#FFFFFF;
+  --burn:#B23A1F;
+  --raw:#7A8A9A;
+  --font-display:"Chiron GoRound TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --font-data:"DM Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141714;--surface:#1E221F;--ink:#ECEDE6;--muted:#A3ABA2;--line:#323832;
+    --pan:#0B0D0C;--pan-rim:#3A403C;--gold:#F0B34A;--gold-soft:#3A2D12;
+    --green:#5FB48A;--on-green:#0D1A13;--burn:#F07A5C;--raw:#9AAABB;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141714;--surface:#1E221F;--ink:#ECEDE6;--muted:#A3ABA2;--line:#323832;
+  --pan:#0B0D0C;--pan-rim:#3A403C;--gold:#F0B34A;--gold-soft:#3A2D12;
+  --green:#5FB48A;--on-green:#0D1A13;--burn:#F07A5C;--raw:#9AAABB;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--font-display);font-weight:900;margin:0;line-height:1.2;text-wrap:balance}
+h1{font-size:38px;letter-spacing:.02em}
+h2{font-size:21px;font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.num{font-family:var(--font-data);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--green);font-weight:700}
+.screen{display:flex;flex-direction:column;gap:18px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-family:var(--font-display);font-size:18px;font-weight:900}
+.brand small{font-family:var(--font-body);font-weight:400;font-size:12px;color:var(--muted);margin-left:6px}
+.staff-btn{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+
+.cta{display:block;width:100%;background:var(--green);color:var(--on-green);font-family:var(--font-display);font-size:22px;font-weight:900;border-radius:16px;padding:14px 16px;letter-spacing:.04em;box-shadow:0 4px 0 color-mix(in srgb,var(--green) 55%,#000)}
+.cta:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--green) 55%,#000)}
+.cta:disabled{opacity:.45;cursor:not-allowed}
+.ghost{display:block;width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:11px 16px;font-weight:500}
+
+/* Intro */
+.hero{display:flex;flex-direction:column;gap:8px}
+.lede{color:var(--muted)}
+.prize{display:flex;gap:12px;align-items:center;background:var(--gold-soft);border-radius:16px;padding:12px 14px}
+.prize b{font-family:var(--font-display);font-weight:900;font-size:17px;display:block;line-height:1.3}
+.prize .crown{flex:none;width:40px;height:40px}
+
+.picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pick{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 6px 8px;min-width:0}
+.pick svg{width:64px;height:48px}
+.pick .t{font-family:var(--font-display);font-weight:900;font-size:17px}
+.pick .p{font-size:12px;color:var(--muted)}
+.pick[aria-pressed="true"]{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset;background:color-mix(in srgb,var(--green) 8%,var(--surface))}
+
+.board-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.board-head{display:flex;justify-content:space-between;align-items:baseline}
+.lb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.lb li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb .rk{font-family:var(--font-data);color:var(--muted)}
+.lb li:first-child .rk{color:var(--gold);font-weight:700}
+.lb .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb .pd{font-size:12px;color:var(--muted);margin-left:6px}
+.lb .sc{font-family:var(--font-data);font-size:16px}
+.lb li.empty{display:block;font-size:13.5px;color:var(--muted);padding:6px 0}
+
+/* Game */
+.hud{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.hud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.hud div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px 10px;display:flex;flex-direction:column}
+.hud small{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.hud .num{font-size:24px;line-height:1.25}
+.hud .hot{color:var(--gold)}
+.timebar{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.timebar i{display:block;height:100%;width:100%;background:var(--green);transform-origin:left}
+.timebar i.low{background:var(--burn)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:100%}
+.chips i{display:block;width:16px;height:12px;border-radius:3px}
+.chips i.round{width:12px;border-radius:50%}
+.stats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
+.stats3 div{display:flex;flex-direction:column;font-size:12px;opacity:.85}
+.stats3 .num{font-size:22px;opacity:1}
+.stage{position:relative;aspect-ratio:1/0.82;max-width:100%;border-radius:22px;background:color-mix(in srgb,var(--pan) 12%,var(--bg));display:grid;place-items:center;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.pan{position:relative;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,var(--pan-rim),var(--pan) 60%);box-shadow:0 0 0 10px var(--pan-rim),0 12px 24px rgba(0,0,0,.25);display:grid;place-items:center}
+.food{position:relative;width:56%;aspect-ratio:1.35;border-radius:10px;background:#F1EAD8;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08)}
+.food .bits{position:absolute;inset:0;border-radius:inherit;background-image:radial-gradient(circle,rgba(255,255,255,.55) 1.4px,transparent 2px),radial-gradient(circle,rgba(120,90,40,.25) 1.2px,transparent 2px);background-size:14px 12px,18px 16px;background-position:2px 3px,8px 7px}
+.food.flip{animation:flip .35s ease-in-out}
+@keyframes flip{50%{transform:scaleY(.1) translateY(-30%)}}
+.pot{position:relative;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#CFE3EA 0 55%,#B7D2DB 56% 66%,var(--pan-rim) 67% 72%,var(--pan) 73%);overflow:hidden}
+.ball{position:absolute;left:50%;width:30%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,0);background:radial-gradient(circle at 35% 30%,#FFFFFF,#EDE6F2 60%,#D4C6E0);box-shadow:0 4px 8px rgba(0,0,0,.18)}
+.ball.crack::after{content:"";position:absolute;inset:30% 20% auto 25%;height:30%;border-top:3px solid #8C6A57;border-radius:50% 50% 0 0}
+.steam{position:absolute;inset:0;pointer-events:none}
+.bubble{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.75);animation:sizzle .7s ease-out forwards}
+@keyframes sizzle{to{transform:translateY(-26px) scale(.4);opacity:0}}
+.verdict{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-family:var(--font-display);font-weight:900;font-size:24px;padding:2px 16px;border-radius:999px;background:var(--surface);white-space:nowrap;animation:pop .3s ease-out}
+.verdict.good{color:var(--gold)}
+.verdict.raw{color:var(--raw)}
+.verdict.burn{color:var(--burn)}
+@keyframes pop{from{transform:translate(-50%,8px) scale(.8);opacity:0}}
+
+.meter{position:relative;height:22px;border-radius:999px;background:linear-gradient(90deg,#F1EAD8,#E8C987 45%,#D8961E 70%,#7A3F12 92%,#2A160A)}
+.meter .zone{position:absolute;top:-3px;bottom:-3px;border:3px solid var(--ink);border-radius:6px}
+.meter .needle{position:absolute;top:-6px;bottom:-6px;width:4px;margin-left:-2px;background:var(--ink);border-radius:2px;box-shadow:0 0 0 2px var(--surface)}
+.meter-lab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+.act{font-size:28px;padding:18px 16px}
+
+/* Result */
+.scorecard{background:#2B2F2D;color:#F6F2E8;border-radius:22px;padding:20px 18px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.scorecard .title{font-family:var(--font-display);font-weight:900;font-size:42px;line-height:1.1;color:#F0B34A}
+.scorecard .big{font-family:var(--font-data);font-size:48px;line-height:1}
+.scorecard .big small{font-size:18px;opacity:.7}
+.trio{display:flex;gap:12px;justify-content:center}
+.trio div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px}
+.trio i{display:block;width:54px;height:40px;border-radius:8px}
+.trio i.round{width:40px;height:40px;border-radius:50%}
+.scorecard .line{font-size:13px;opacity:.8}
+.join{display:flex;gap:8px}
+.join input{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.join button{flex:none;background:var(--gold);color:#1F1608;font-weight:700;border-radius:12px;padding:10px 16px}
+.joined{font-size:14px;text-align:center;color:var(--green);font-weight:700}
+.reward{background:var(--surface);border:2px dashed var(--gold);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
+.reward .what{font-family:var(--font-display);font-weight:900;font-size:24px;line-height:1.3}
+.reward .code{font-family:var(--font-data);font-size:22px;letter-spacing:.12em;color:var(--gold)}
+.stamp{display:inline-block;border:3px solid var(--burn);color:var(--burn);font-family:var(--font-display);font-weight:900;font-size:22px;padding:2px 14px;border-radius:8px;transform:rotate(-8deg)}
+.redeem{border:1.5px solid var(--gold);background:var(--gold-soft);border-radius:999px;padding:8px 18px;font-weight:700}
+.redeem.armed{background:var(--burn);border-color:var(--burn);color:#fff}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.prods{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.prods li{display:flex;gap:8px;align-items:baseline}
+.prods li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--gold);transform:translateY(-2px)}
+.contact{font-size:13px;color:var(--muted)}
+.contact b{color:var(--ink);font-family:var(--font-data);font-weight:500}
+
+/* Staff */
+.sheet{position:fixed;inset:auto 0 0 0;z-index:30;background:var(--surface);border-top:1px solid var(--line);border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.18);max-height:86vh;overflow:auto}
+.sheet-in{max-width:480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.sheet label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.sheet input{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+.statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.statgrid div{background:var(--bg);border-radius:10px;padding:6px 4px}
+.statgrid small{display:block;font-size:11px;color:var(--muted)}
+.statgrid .num{font-size:20px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:25}
+
+@media (prefers-reduced-motion: reduce){
+  .food.flip,.bubble,.verdict{animation:none}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="p-radish" viewBox="0 0 64 48">
+      <rect x="8" y="10" width="48" height="30" rx="5" fill="#E2B867"/>
+      <rect x="8" y="10" width="48" height="10" rx="5" fill="#F3E7CB"/>
+      <g fill="#FFFFFF" opacity=".7"><circle cx="18" cy="28" r="1.6"/><circle cx="32" cy="32" r="1.4"/><circle cx="46" cy="27" r="1.6"/></g>
+    </symbol>
+    <symbol id="p-nian" viewBox="0 0 64 48">
+      <rect x="10" y="12" width="44" height="26" rx="6" fill="#C9792A"/>
+      <rect x="10" y="12" width="44" height="9" rx="5" fill="#E6A35A"/>
+      <g fill="#7A2A20"><circle cx="20" cy="29" r="2.2"/><circle cx="34" cy="31" r="2"/><circle cx="45" cy="28" r="2.2"/></g>
+    </symbol>
+    <symbol id="p-yuan" viewBox="0 0 64 48">
+      <path d="M8 22 Q32 52 56 22Z" fill="#2F6B4F"/>
+      <ellipse cx="32" cy="22" rx="24" ry="5" fill="#CFE3EA"/>
+      <circle cx="24" cy="19" r="8" fill="#FFFFFF" stroke="#D8D0C0"/>
+      <circle cx="40" cy="18" r="8" fill="#EDE2F2" stroke="#C8B4D6"/>
+    </symbol>
+    <symbol id="crown" viewBox="0 0 40 40">
+      <path d="M6 30 L8 12 L15 20 L20 8 L25 20 L32 12 L34 30Z" fill="#D8961E"/>
+      <rect x="6" y="30" width="28" height="5" rx="2" fill="#B87A10"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">曾家莊<small>純米糕粿</small></div>
+    <button class="staff-btn" id="staffOpen" type="button">攤主設定</button>
+  </header>
+
+  <!-- Screen 1 -->
+  <section id="scrIntro" class="screen" aria-labelledby="t1">
+    <div class="hero">
+      <p class="eyebrow" id="eyebrow">一局 60 秒 · 能煎幾塊煎幾塊 · 連擊加分</p>
+      <h1 id="t1">金黃翻面王</h1>
+      <p class="lede">火候條跑進金黃區就按「翻面」，越靠中間分數越高。連續煎好有連擊加分，越煎越快，看你能撐多久。</p>
+    </div>
+
+    <div class="prize">
+      <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+      <div><b id="grandPrize">收攤前排行榜第一名，送純米糕粿禮盒一盒</b><span class="small muted">每位挑戰者都能試吃一塊現煎純米糕</span></div>
+    </div>
+
+    <section aria-labelledby="t2" class="screen" style="gap:10px">
+      <h2 id="t2">今天想挑戰哪一款？</h2>
+      <div class="picks">
+        <button class="pick" type="button" data-p="radish" aria-pressed="true"><svg aria-hidden="true"><use href="#p-radish"/></svg><span class="t">蘿蔔糕</span><span class="p">煎到金黃</span></button>
+        <button class="pick" type="button" data-p="nian" aria-pressed="false"><svg aria-hidden="true"><use href="#p-nian"/></svg><span class="t">年糕</span><span class="p">煎到微焦</span></button>
+        <button class="pick" type="button" data-p="yuan" aria-pressed="false"><svg aria-hidden="true"><use href="#p-yuan"/></svg><span class="t">湯圓</span><span class="p">浮起就撈</span></button>
+      </div>
+    </section>
+
+    <button class="cta" id="startBtn" type="button">開火！</button>
+
+    <section class="board-card" aria-labelledby="t3">
+      <div class="board-head"><h3 id="t3">今日排行榜</h3><span class="small muted" id="playsLine"></span></div>
+      <ol class="lb" id="lbIntro"></ol>
+    </section>
+  </section>
+
+  <!-- Screen 2 -->
+  <section id="scrGame" class="screen" hidden aria-label="遊戲中">
+    <div class="hud">
+      <div><small>剩餘秒數</small><span class="num" id="timeLeft">60</span></div>
+      <div><small>總分</small><span class="num" id="score">0</span></div>
+      <div><small>連擊</small><span class="num" id="combo">0</span></div>
+    </div>
+    <div class="timebar" aria-hidden="true"><i id="timeFill"></i></div>
+    <div class="stage" id="stage">
+      <div class="pan" id="pan"><div class="food" id="food"><span class="bits"></span></div></div>
+      <div class="pot" id="pot" hidden><div class="ball" id="ball"></div></div>
+      <div class="steam" id="steam"></div>
+      <div id="verdictBox"></div>
+    </div>
+    <div>
+      <div class="meter" aria-hidden="true"><span class="zone" id="zone"></span><span class="needle" id="needle"></span></div>
+      <div class="meter-lab"><span id="labL">生</span><span id="labM">金黃區</span><span id="labR">焦</span></div>
+    </div>
+    <button class="cta act" id="actBtn" type="button">翻面！</button>
+    <p class="small muted" style="text-align:center" id="roundLine">第 1 塊</p>
+  </section>
+
+  <!-- Screen 3 -->
+  <section id="scrResult" class="screen" hidden aria-live="polite">
+    <div class="scorecard">
+      <span class="line" id="rProd">曾家莊純米蘿蔔糕</span>
+      <span class="title" id="rTitle">煎神</span>
+      <span class="big"><span id="rScore">0</span><small> 分</small></span>
+      <div class="stats3">
+        <div><span class="num" id="rCount">0</span>煎了幾塊</div>
+        <div><span class="num" id="rPerfect">0</span>完美金黃</div>
+        <div><span class="num" id="rBest">0</span>最高連擊</div>
+      </div>
+      <div class="chips" id="rChips"></div>
+      <span class="line" id="rRank"></span>
+    </div>
+
+    <div id="joinBox"></div>
+
+    <div class="reward">
+      <span class="small muted">把這個畫面給攤主看</span>
+      <span class="what" id="rReward">試吃一塊現煎純米糕</span>
+      <span class="code" id="rCode">TJ-0000</span>
+      <div id="redeemBox"></div>
+      <span class="small muted" id="shareLine"></span>
+    </div>
+
+    <div class="card">
+      <h3 id="rProdTitle">純米款帶回家</h3>
+      <ul class="prods" id="rProds"></ul>
+      <p class="small" id="rTip"></p>
+      <p class="small muted">曾家莊純米款照古法做：米泡水、現磨成米漿、入籠蒸熟。</p>
+      <p class="contact">LINE 訂購　<b>singletune</b>　·　電話　<b>0988-651-029</b></p>
+    </div>
+
+    <button class="cta" id="nextBtn" type="button">下一位挑戰者</button>
+  </section>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" hidden role="dialog" aria-labelledby="sheetT">
+  <div class="sheet-in">
+    <h2 id="sheetT">攤主設定</h2>
+    <p class="small muted">排行榜、設定與統計只存在這台手機或平板上，每天自動換新榜。下面的獎項是範例，請改成今天實際提供的。</p>
+    <div class="statgrid">
+      <div><small>今日挑戰</small><span class="num" id="sPlays">0</span></div>
+      <div><small>煎神</small><span class="num" id="sTop">0</span></div>
+      <div><small>已核銷</small><span class="num" id="sRed">0</span></div>
+    </div>
+    <label for="cGrand">今日大獎（顯示在首頁）<input id="cGrand" type="text" maxlength="40"></label>
+    <label for="cSecs">每局秒數<select id="cSecs" style="font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%"><option value="30">30 秒（排隊很長時）</option><option value="60">60 秒（建議）</option><option value="100">100 秒（人少、想拚高分）</option></select></label>
+    <label for="cR0">煎神獎項（<span id="topLine">4500</span> 分以上）<input id="cR0" type="text" maxlength="24"></label>
+    <label for="cR1">其他挑戰者獎項<input id="cR1" type="text" maxlength="24"></label>
+    <label for="cShare">分享加碼說明（留空就不顯示）<input id="cShare" type="text" maxlength="40"></label>
+    <div class="row2">
+      <button class="ghost" id="resetBoard" type="button">清空今日排行榜</button>
+      <button class="cta" id="staffClose" type="button" style="font-size:18px;padding:11px">完成</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+    set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const PRODUCTS = {
+    radish:{name:'蘿蔔糕', label:'曾家莊純米蘿蔔糕', act:'翻面！', labs:['生','金黃區','焦'], fry:true,
+      prods:['純米港式蘿蔔糕','純米素傳統蘿蔔糕','純米素香菇港式蘿蔔糕','純米素芋頭糕'],
+      tip:'回家這樣煎：切片下鍋，中火煎到兩面金黃、外酥內軟，沾蒜蓉醬油或撒點白胡椒。',
+      ranks:['煎神','金牌師傅','好手','煎糕學徒']},
+    nian:{name:'年糕', label:'曾家莊純米年糕', act:'翻面！', labs:['生','微焦區','焦'], fry:true,
+      prods:['純米焦糖年糕','純米紅豆年糕','頂級純米鹹甜年糕'],
+      tip:'回家這樣煎：切片乾煎到表面微焦，或裹蛋液煎，外脆裡Q。',
+      ranks:['煎神','金牌師傅','好手','年糕學徒']},
+    yuan:{name:'湯圓', label:'曾家莊芋頭包餡湯圓', act:'撈起！', labs:['沉底','浮起區','破皮'], fry:false,
+      prods:['芋頭包餡湯圓（鮮肉）','芋頭包餡湯圓（紅豆牛奶）'],
+      tip:'回家這樣煮：水滾後下湯圓，浮起再煮一下就撈，鹹的加芹菜，甜的配薑湯。',
+      ranks:['煮神','金牌師傅','好手','湯圓學徒']}
+  };
+  // n-th slice: golden zone narrows and heat rises faster, floors at slice 20
+  function difficulty(n){
+    const t = Math.min(n, 20) / 20;
+    const width = 26 - t*14, mid = 70 - t*4 + (Math.random()*8 - 4);
+    return {lo: mid - width/2, hi: mid + width/2, ms: 2200 - t*1150};
+  }
+  // tier cutoffs are for a 60-second game and scale with game length
+  const TIER_CUTS = [4500, 3000, 1800];
+  const DEFAULT_CFG = {grand:'收攤前排行榜第一名，送純米糕粿禮盒一盒', r0:'試吃一塊＋現場折 $30', r1:'試吃一塊現煎純米糕', share:'截圖成績卡發 IG 限動並標記曾家莊，再加碼一塊', secs:60};
+  let cfg = Object.assign({}, DEFAULT_CFG, store.get('tj2_cfg', {}));
+
+  const dayKey = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); };
+  const freshDay = () => ({key:dayKey(), board:[], plays:0, top:0, red:0});
+  let day = store.get('tj2_day', null) || freshDay();
+  if(day.key !== dayKey()) day = freshDay();
+  const saveDay = () => store.set('tj2_day', day);
+
+  let prod = 'radish';
+  document.querySelectorAll('.pick').forEach(b => b.addEventListener('click', () => {
+    prod = b.dataset.p;
+    document.querySelectorAll('.pick').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  }));
+
+  function renderIntro(){
+    $('grandPrize').textContent = cfg.grand;
+    $('eyebrow').textContent = '一局 ' + cfg.secs + ' 秒 · 能煎幾塊煎幾塊 · 連擊加分';
+    $('playsLine').textContent = day.plays ? '今天已有 ' + day.plays + ' 人挑戰' : '';
+    const top = day.board.slice().sort((a,b) => b.s - a.s).slice(0, 8);
+    $('lbIntro').innerHTML = top.length
+      ? top.map((r,i) => '<li><span class="rk">' + (i+1) + '</span><span class="nm">' + esc(r.n) + '<span class="pd">' + esc(PRODUCTS[r.p].name) + (r.t ? ' · ' + r.t + '秒' : '') + '</span></span><span class="sc">' + r.s + '</span></li>').join('')
+      : '<li class="empty">還沒有人上榜，第一位挑戰者就是榜首。</li>';
+  }
+  function show(w){
+    $('scrIntro').hidden = w !== 'intro';
+    $('scrGame').hidden = w !== 'game';
+    $('scrResult').hidden = w !== 'result';
+    window.scrollTo({top:0});
+  }
+
+  // ---------- doneness colors ----------
+  const STOPS = [[0,[241,234,216]],[45,[232,201,135]],[70,[216,150,30]],[90,[122,63,18]],[100,[42,22,10]]];
+  function colorAt(v){
+    for(let i=1;i<STOPS.length;i++){
+      if(v <= STOPS[i][0]){
+        const [a,ca] = STOPS[i-1], [b,cb] = STOPS[i], t = (v-a)/(b-a);
+        return 'rgb(' + ca.map((c,k) => Math.round(c + (cb[k]-c)*t)).join(',') + ')';
+      }
+    }
+    return 'rgb(42,22,10)';
+  }
+  const pieceColor = v => P().fry ? colorAt(v) : (v >= 100 ? '#8C6A57' : '#EDE2F2');
+
+  // ---------- game ----------
+  let round = 0, total = 0, v = 0, running = false, raf = 0, last = 0, results = [], wob = 1, bubT = 0, nextT = 0;
+  let combo = 0, bestCombo = 0, perfect = 0, playing = false, endAt = 0, secs = 60, clockRaf = 0, cur = null;
+  const P = () => PRODUCTS[prod];
+
+  function setupRound(){
+    if(!playing) return;
+    const p = P();
+    cur = difficulty(round);
+    v = 0; wob = 1;
+    $('zone').style.left = cur.lo + '%'; $('zone').style.width = (cur.hi - cur.lo) + '%';
+    $('needle').style.left = '0%';
+    $('roundLine').textContent = '第 ' + (round+1) + ' 塊';
+    $('verdictBox').innerHTML = '';
+    $('pan').hidden = !p.fry; $('pot').hidden = p.fry;
+    $('food').style.background = colorAt(0);
+    $('food').style.borderRadius = prod === 'nian' ? '16px' : '10px';
+    $('ball').style.top = '62%'; $('ball').classList.remove('crack');
+    $('actBtn').textContent = p.act; $('actBtn').disabled = false;
+    running = true; last = performance.now();
+    raf = requestAnimationFrame(step);
+    bubbles();
+  }
+
+  function step(now){
+    if(!running) return;
+    const dt = Math.min(50, now - last); last = now;
+    // speed wobbles so players can't just count
+    if(Math.random() < 0.03) wob = 0.65 + Math.random()*0.9;
+    v += (100 / cur.ms) * dt * wob;
+    if(v >= 100){ v = 100; draw(); judge(); return; }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+
+  function draw(){
+    $('needle').style.left = v + '%';
+    if(P().fry) $('food').style.background = colorAt(v);
+    else {
+      $('ball').style.top = (62 - Math.min(v, 85) * 0.6) + '%';   // rises as it cooks
+      if(v > 92) $('ball').classList.add('crack');
+    }
+  }
+
+  function bubbles(){
+    clearTimeout(bubT);
+    if(!running) return;
+    const b = document.createElement('span');
+    b.className = 'bubble';
+    b.style.left = (30 + Math.random()*40) + '%'; b.style.top = (35 + Math.random()*30) + '%';
+    $('steam').appendChild(b); setTimeout(() => b.remove(), 750);
+    bubT = setTimeout(bubbles, 260 - Math.min(v,100)*1.6);
+  }
+
+  function judge(){
+    running = false; cancelAnimationFrame(raf); clearTimeout(bubT);
+    $('actBtn').disabled = true;
+    const p = P(), r = cur, mid = (r.lo + r.hi) / 2, half = (r.hi - r.lo) / 2;
+    let pts, kind, word;
+    if(v >= 100){ pts = 0; kind = 'burn'; word = p.fry ? '焦掉了' : '破皮了'; }
+    else if(v < r.lo){ pts = Math.round(v * 0.4); kind = 'raw'; word = p.fry ? '還沒熟' : '還沉著'; }
+    else if(v > r.hi){ pts = Math.round(Math.max(10, 50 - (v - r.hi) * 3)); kind = 'burn'; word = '有點過頭'; }
+    else {
+      const off = Math.abs(v - mid) / half;   // 0 = dead center
+      pts = Math.round(100 - off * 30);
+      kind = 'good';
+      if(off < 0.2){ perfect++; word = p.fry ? '完美金黃' : '剛剛好'; } else word = '漂亮';
+    }
+    if(kind === 'good'){
+      combo++; bestCombo = Math.max(bestCombo, combo);
+      const bonus = Math.min(60, (combo - 1) * 10);
+      pts += bonus;
+      if(combo > 1) word += ' 連擊×' + combo;
+    } else combo = 0;
+    total += pts; results.push({v, pts, good: kind === 'good'});
+    $('score').textContent = total;
+    $('combo').textContent = combo;
+    $('combo').classList.toggle('hot', combo >= 3);
+    $('verdictBox').innerHTML = '<span class="verdict ' + kind + '">' + word + ' +' + pts + '</span>';
+    if(p.fry){ const f = $('food'); f.classList.remove('flip'); void f.offsetWidth; f.classList.add('flip'); }
+    try{ navigator.vibrate && navigator.vibrate(kind === 'good' ? 20 : 70); }catch(e){}
+    round++;
+    nextT = setTimeout(setupRound, kind === 'good' ? 380 : 650);
+  }
+
+  function clock(){
+    const left = Math.max(0, endAt - performance.now());
+    $('timeLeft').textContent = Math.ceil(left/1000);
+    $('timeFill').style.transform = 'scaleX(' + (left/(secs*1000)) + ')';
+    $('timeFill').classList.toggle('low', left < 10000);
+    if(left <= 0){ endGame(); return; }
+    clockRaf = requestAnimationFrame(clock);
+  }
+
+  function endGame(){
+    playing = false; running = false;
+    cancelAnimationFrame(raf); cancelAnimationFrame(clockRaf); clearTimeout(bubT); clearTimeout(nextT);
+    $('actBtn').disabled = true;
+    $('verdictBox').innerHTML = '<span class="verdict good">時間到！</span>';
+    setTimeout(finish, 900);
+  }
+
+  $('actBtn').addEventListener('click', () => { if(running) judge(); });
+  $('stage').addEventListener('pointerdown', e => { if(running){ e.preventDefault(); judge(); } });
+
+  function startGame(){
+    round = 0; total = 0; results = []; combo = 0; bestCombo = 0; perfect = 0;
+    secs = Number(cfg.secs) || 60;
+    const p = P();
+    $('labL').textContent = p.labs[0]; $('labM').textContent = p.labs[1]; $('labR').textContent = p.labs[2];
+    $('score').textContent = 0; $('combo').textContent = 0; $('combo').classList.remove('hot');
+    $('timeLeft').textContent = secs; $('timeFill').style.transform = 'scaleX(1)'; $('timeFill').classList.remove('low');
+    show('game');
+    playing = true;
+    setTimeout(() => { endAt = performance.now() + secs*1000; clock(); setupRound(); }, 400);
+  }
+
+  // ---------- result ----------
+  let current = null;
+  function tierOf(score){
+    const k = secs / 60;
+    return score >= TIER_CUTS[0]*k ? 0 : score >= TIER_CUTS[1]*k ? 1 : score >= TIER_CUTS[2]*k ? 2 : 3;
+  }
+  function finish(){
+    const p = P();
+    const ti = tierOf(total);
+    current = {id: Date.now().toString(36), score: total, tier: ti, code: 'TJ-' + Math.floor(1000 + Math.random()*9000), joined:false};
+    day.plays++; if(ti === 0) day.top++; saveDay();
+
+    $('rProd').textContent = p.label + ' · ' + secs + ' 秒挑戰';
+    $('rTitle').textContent = p.ranks[ti];
+    $('rScore').textContent = total;
+    $('rCount').textContent = results.length;
+    $('rPerfect').textContent = perfect;
+    $('rBest').textContent = bestCombo;
+    $('rChips').innerHTML = results.map(r => '<i class="' + (p.fry ? '' : 'round') + '" style="background:' + pieceColor(r.v) + '"></i>').join('');
+    $('rRank').textContent = '目前可排今日第 ' + (day.board.filter(r => r.s > total).length + 1) + ' 名';
+    $('joinBox').innerHTML = '<form class="join" id="joinForm"><input id="nick" type="text" maxlength="10" placeholder="輸入暱稱登上排行榜" autocomplete="off" aria-label="暱稱"><button type="submit">登榜</button></form>';
+    $('joinForm').addEventListener('submit', joinBoard);
+    $('rReward').textContent = ti === 0 ? cfg.r0 : cfg.r1;
+    $('rCode').textContent = current.code;
+    $('shareLine').textContent = cfg.share; $('shareLine').hidden = !cfg.share;
+    $('redeemBox').innerHTML = '<button class="redeem" id="redeemBtn" type="button">攤主核銷</button>';
+    bindRedeem();
+    $('rProdTitle').textContent = '純米' + p.name + '帶回家';
+    $('rProds').innerHTML = p.prods.map(x => '<li>' + esc(x) + '</li>').join('');
+    $('rTip').textContent = p.tip;
+    show('result');
+  }
+
+  function joinBoard(e){
+    e.preventDefault();
+    if(current.joined) return;
+    const n = $('nick').value.trim().slice(0,10) || '神秘煎手';
+    current.joined = true;
+    day.board.push({id: current.id, n, s: current.score, p: prod, c: current.code, t: secs});
+    saveDay();
+    const rank = day.board.filter(r => r.s > current.score).length + 1;
+    $('joinBox').innerHTML = '<p class="joined">' + esc(n) + ' 已登榜，今日第 ' + rank + ' 名（兌換碼 ' + current.code + ' 是領大獎的憑證）</p>';
+  }
+
+  function bindRedeem(){
+    const b = $('redeemBtn'); let armed = false, t = 0;
+    b.addEventListener('click', () => {
+      if(!armed){ armed = true; b.classList.add('armed'); b.textContent = '再按一次確認核銷'; t = setTimeout(() => { armed = false; b.classList.remove('armed'); b.textContent = '攤主核銷'; }, 3000); return; }
+      clearTimeout(t); day.red++; saveDay();
+      $('redeemBox').innerHTML = '<span class="stamp">已兌換</span>';
+    });
+  }
+
+  $('startBtn').addEventListener('click', startGame);
+  $('nextBtn').addEventListener('click', () => { current = null; renderIntro(); show('intro'); });
+
+  // ---------- staff ----------
+  function openSheet(){
+    if(playing) return;
+    $('cSecs').value = String(cfg.secs || 60); $('topLine').textContent = Math.round(TIER_CUTS[0]*(cfg.secs||60)/60); $('cGrand').value = cfg.grand; $('cR0').value = cfg.r0; $('cR1').value = cfg.r1; $('cShare').value = cfg.share;
+    $('sPlays').textContent = day.plays; $('sTop').textContent = day.top; $('sRed').textContent = day.red;
+    $('sheet').hidden = false; $('scrim').hidden = false;
+  }
+  function closeSheet(){
+    cfg = {grand:$('cGrand').value.trim() || DEFAULT_CFG.grand, r0:$('cR0').value.trim() || DEFAULT_CFG.r0, r1:$('cR1').value.trim() || DEFAULT_CFG.r1, share:$('cShare').value.trim(), secs:Number($('cSecs').value) || 60};
+    store.set('tj2_cfg', cfg);
+    $('sheet').hidden = true; $('scrim').hidden = true;
+    renderIntro();
+  }
+  $('cSecs').addEventListener('change', () => { $('topLine').textContent = Math.round(TIER_CUTS[0]*Number($('cSecs').value)/60); });
+  $('staffOpen').addEventListener('click', openSheet);
+  $('staffClose').addEventListener('click', closeSheet);
+  $('scrim').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+  let resetArmed = false;
+  $('resetBoard').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if(!resetArmed){ resetArmed = true; b.textContent = '再按一次確認'; setTimeout(() => { resetArmed = false; b.textContent = '清空今日排行榜'; }, 3000); return; }
+    day = freshDay(); saveDay();
+    $('sPlays').textContent = 0; $('sTop').textContent = 0; $('sRed').textContent = 0;
+    resetArmed = false; b.textContent = '已清空';
+  });
+
+  renderIntro();
+  show('intro');
+})();
+</script>
+
+</body>
+</html>
